@@ -31,5 +31,8 @@ const Clienteschema = new Schema({
         type: String,
         required: true
     }
-});
+},{
+        timestamps: true,
+        versionKey:false
+    });
 module.exports = model('Cliente', Clienteschema);

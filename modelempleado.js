@@ -36,5 +36,9 @@ const Empleadoschema = new Schema({
         required: true,
         enum:['administrador','trabajador']
     }
-});
+    
+},{
+        timestamps: true,
+        versionKey:false
+    });
 module.exports = model('Empleado', Empleadoschema);

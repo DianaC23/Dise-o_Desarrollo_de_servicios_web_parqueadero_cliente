@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const dbconnect = require('./config');
 const ModeUser = require('./modelcliente');
 const ModeEmpleado = require('./modelempleado');
+const ModeTivehiculo = require('./modeltivehiculo')
 
 //Llamar para que reconozca el archivo config
 dbconnect();
@@ -102,8 +103,6 @@ router.post('/login/cliente',async(req, res)=>{
     //Buscar si el nombre existe en mongodb
     //Busca en la base de datos el usuario que se recibio
     const usuarioExiste = await ModeUser.findOne({correo_electronico});
-
-
     //Validar si existe
     //Si el usuario No existe
     if(!usuarioExiste){
@@ -201,7 +200,7 @@ router.post('/login/empleado',async(req, res)=>{
     const empleadoExiste = await ModeEmpleado.findOne({correo_electronico});
     //Validar si existe
     if(!empleadoExiste){
-        return res.status(401).json({mensaje: "Error de autenticación3"});
+        return res.status(401).json({mensaje: "Error de autenticación"});
     }
     //Validar si la contraseña existe
     //Compara la contraseña
@@ -209,14 +208,84 @@ router.post('/login/empleado',async(req, res)=>{
     if(empleadoExiste.contrasena=== contrasena){
         return res.status(200).json({mensaje:`Autenticación satisfactora, Bienvenido ${empleadoExiste.rol} ${empleadoExiste.nombre} `});
     }else{//401= no autorrizado
-        return res.status(401).json({mensaje: "Error de autenticación2"});
+        return res.status(401).json({mensaje: "Error de autenticación"});
     }
 } catch(error){//obligatorio si la base de datos falla
     //500= Error ineterno
         return res.status(500).json({mensaje:"Error",error:error.message});}
 });
 /***********=========================*********
- * RUTA PARA ESPACIOS
+ * RUTA PARA TIPO DE VEHICULO
+ **********=========================**********/ 
+//Crear tipo de vehiculo
+router.post('/tipovehiculo', async (req, res)=>{
+    try {
+        const tipoVehiculoCreado = await ModeTivehiculo.create(req.body);
+        res.send(tipoVehiculoCreado);
+    } catch (error) {
+        res.status(500).json({mensaje: "Error al crear vehiculo",error:error.message});
+    }
+})
+
+//Consulta general
+router.get('/tipovehiculo', async (req, res)=>{
+    try {
+        const respuesta = await ModeTivehiculo.find({});
+    res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje: "Error al consultar",error:error.message});
+    }
+})
+//Consultar por placa
+router.get('/tipovehiculo/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTivehiculo.findOne({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"vehiculo no encontrado"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje: "Error al consultar por placa",error:error.message});
+    }
+    
+})
+
+//Actualizar datos del vehiculo
+router.put('/tipovehiculo/:placa', async(req,res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTivehiculo.findOneAndUpdate({placa: placa_buscar}, req.body, {new:true});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"vehiculo no encontrado"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje: "Error al actualizar datos",error:error.message});
+    }
+})
+
+//Eliminar vehiculo
+router.delete('/tipovehiculo/:placa',async(req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTivehiculo.findOneAndDelete({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"vehiculo no encontrado"});
+        }
+        res.send({mensaje: "vehiculo eliminado con exito"});
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al eliminar", error: error.message});
+    }
+})
+/***********=========================*********
+ * RUTA PARA VEHICULO
+ **********=========================**********/ 
+/***********=========================*********
+ * RUTA PARATIPO DE MOVIMIENTO
+ **********=========================**********/
+/***********=========================*********
+ * RUTA PARATIPO DE TARIFA
  **********=========================**********/ 
 //json hara uso de las rutas
 //Vincular las rutas a la aplicación express
