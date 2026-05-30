@@ -45,11 +45,14 @@ router.get('/cliente', async (req, res)=>{
     }
 })
 
-//Consultar por ID
+//Consultar por documento
 router.get('/cliente/:id_cliente', async (req, res)=>{
     try {
-        const id_cliente = req.params.id_cliente;
-        const respuesta = await ModeUset.findById({id_cliente});
+        const documento_buscar = req.params.id_cliente;
+        const respuesta = await ModeUser.findOne({documento: documento_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Cliente no encontrado"});
+        }
         res.send(respuesta);
     } catch (error) {
         res.status(500).json({mensaje: "Error al consultar por ID",error:error.message});
@@ -60,8 +63,11 @@ router.get('/cliente/:id_cliente', async (req, res)=>{
 //Actualizar datos del usuario
 router.put('/cliente/:id_cliente', async(req,res)=>{
     try {
-        const id_cliente = req.params.id_cliente;
-         const respuesta = await ModelUser.findByIdAndUpdate(id_cliente, req.body, {new:true});
+        const documento_buscar = req.params.id_cliente;
+        const respuesta = await ModeUser.findOneAndUpdate({documento: documento_buscar}, req.body, {new:true});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Cliente no encontrado"});
+        }
         res.send(respuesta);
     } catch (error) {
         res.status(500).json({mensaje: "Error al actualizar datos",error:error.message});
@@ -72,9 +78,12 @@ router.put('/cliente/:id_cliente', async(req,res)=>{
 //Eliminar usuario
 router.delete('/cliente/:id_cliente',async(req, res)=>{
     try {
-        const id_cliente = req.params.id_cliente;
-        const repuesta = await ModeUser.findByIdAndDelete(id_cliente);
-        res.send({mensaje: "usuario eliminado con exito",respuesta});
+        const documento_buscar = req.params.id_cliente;
+        const respuesta = await ModeUser.findOneAndDelete({documento: documento_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Cliente no encontrado"});
+        }
+        res.send({mensaje: "usuario eliminado con exito"});
     } catch (error) {
         res.status(500).json({mensaje:"Error al eliminar", error: error.message});
     }
