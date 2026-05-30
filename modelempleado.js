@@ -1,8 +1,8 @@
-//MODELO QUE VA A CONTENER LA BASE DE DATOS DDEL CLIENTE
+//MODELO QUE VA A CONTENER LA BASE DE DATOS DDEL EMPLEADO
 //llamar a moongose
 const {Schema, model} = require('mongoose');
 //Nueva variable para acceder al esquema de la base de datos
-const Clienteschema = new Schema({
+const Empleadoschema = new Schema({
     nombre: {
         type: String,
         required: true
@@ -30,6 +30,11 @@ const Clienteschema = new Schema({
     contrasena: {
         type: String,
         required: true
+    },
+    rol: {
+        type: String,
+        required: true,
+        enum:['administrador','trabajador']
     }
 });
-module.exports = model('Cliente', Clienteschema);
+module.exports = model('Empleado', Empleadoschema);
