@@ -2,8 +2,7 @@ const { Schema, model } = require('mongoose');
 
 const EspacioSchema = new Schema({
      documento: {
-        type: Schema.Types.ObjectId,
-        ref: 'Cliente',
+        type: String,
         required: true
     },
     nombre: {
