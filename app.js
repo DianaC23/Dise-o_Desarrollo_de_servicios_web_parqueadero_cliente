@@ -11,6 +11,7 @@ const ModeTivehiculo = require('./modeltivehiculo');
 const ModeVehiculo = require('./modelvehiculo');
 const ModeMovimiento = require('./modelmovimiento');
 const ModeTarifa = require('./modeltarifa');
+const ModeEspacio = require('./modelespacio');
 
 //Llamar para que reconozca el archivo config
 dbconnect();
@@ -438,10 +439,66 @@ router.delete('/tarifa/:placa', async(req, res)=>{
 /***********=========================*********
  * RUTA PARA TIPO DE ESPACIO
  **********=========================**********/ 
+//Crear información de los espacios  
+router.post('/espacio', async (req, res)=>{
+    try{
+        const infoespacio = await ModeEspacio.create(req.body);
+        res.status(201).send(infoespacio);
+    }catch(error){
+        res.status(500).json({mensaje:"Error al insertar las coordenadas del espacio",error:error.message});
+    }
+})
+//Consulta general
+router.get('/espacio', async (req, res)=>{
+    try {
+        const infoespacio = await ModeEspacio.find({});
+        res.send(infoespacio);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar coordenadas del espacio", error:error.message});
+    }
+})
+//Consultar por placa
+router.get('/espacio/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeEspacio.findOne({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Coordenadas del espacio no encontradas"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar coordenadas del espacio", error:error.message});
+    }
+})
+//Actualizar datos
+router.put('/espacio/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeEspacio.findOneAndUpdate({placa: placa_buscar}, req.body, {new:true});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Coordenadas de este espacio no encontradas"});
+        }
+        res.json({mensaje:"Coordenadas encontradas", datos: respuesta});
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar coordenadas por placa", error:error.message});
+    }
+})
+//Eliminar datos
+router.delete('/espacio/:placa', async(req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeEspacio.findOneAndDelete({placa:placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Coordenada de espacio no encontrada"});
+        }
+        res.send({mensaje: "Coordenadas de espacio eliminadas con exito"});
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al eliminar coordenadas del espacio", error:error.message});
+    }
+})
 //json hara uso de las rutas
 //Vincular las rutas a la aplicación express
 app.use(router);
-
 //Iniciar el servidor
 app.listen(PORT, () =>{
     console.log(`Servidor activo en ${PORT}`)
