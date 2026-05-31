@@ -12,11 +12,12 @@ const Empleadoschema = new Schema({
         required: true
     },
     documento: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Cliente',
         required: true
     },
     telefono: {
-        type: String,
+        type: Number,
         required: true
     },
     correo_electronico: {

@@ -10,6 +10,7 @@ const ModeEmpleado = require('./modelempleado');
 const ModeTivehiculo = require('./modeltivehiculo');
 const ModeVehiculo = require('./modelvehiculo');
 const ModeMovimiento = require('./modelmovimiento');
+const ModeTarifa = require('./modeltarifa');
 
 //Llamar para que reconozca el archivo config
 dbconnect();
@@ -377,6 +378,63 @@ router.get('/movimiento/:placa', async (req, res)=>{
 /***********=========================*********
  * RUTA PARA TIPO DE TARIFA
  **********=========================**********/ 
+//Crear información de las tarifas 
+router.post('/tarifa', async (req, res)=>{
+    try{
+        const infotarifa = await ModeTarifa.create(req.body);
+        res.status(201).send(infotarifa);
+    }catch(error){
+        res.status(500).json({mensaje:"Error al insertar los valores de la tarifa",error:error.message});
+    }
+})
+//Consulta general
+router.get('/tarifa', async (req, res)=>{
+    try {
+        const infotarifa = await ModeTarifa.find({});
+        res.send(infotarifa);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar tipo de tarifa", error:error.message});
+    }
+})
+//Consultar por placa
+router.get('/tarifa/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTarifa.findOne({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Valores de la tarifa no encontrado"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar valores de la tarifa", error:error.message});
+    }
+})
+//Actualizar datos
+router.put('/tarifa/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTarifa.findOneAndUpdate({placa: placa_buscar}, req.body, {new:true});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Valores de tarifa actualizados"});
+        }
+        res.send(respuesta);s
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar valores por placa", error:error.message});
+    }
+})
+//Eliminar datos
+router.delete('/tarifa/:placa', async(req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeTarifa.findOneAndDelete({placa:placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Tarifa no encontrada"});
+        }
+        res.send({mensaje: "Valores de la tarifa eliminados con exito"});
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al eliminar valores de la tarifa", error:error.message});
+    }
+})
 /***********=========================*********
  * RUTA PARA TIPO DE ESPACIO
  **********=========================**********/ 

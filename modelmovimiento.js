@@ -4,7 +4,8 @@ const {Schema, model} = require('mongoose');
 //Nueva variable para acceder al esquema de la base de datos
 const Movimientoschema = new Schema({
     documento: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Cliente',
         required: true
     },
     placa: {

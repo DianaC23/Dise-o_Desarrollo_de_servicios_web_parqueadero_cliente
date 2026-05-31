@@ -12,11 +12,11 @@ const Clienteschema = new Schema({
         required: true
     },
     documento: {
-        type: String,
+        type: Number,
         required: true
     },
     telefono: {
-        type: String,
+        type: Number,
         required: true
     },
     correo_electronico: {

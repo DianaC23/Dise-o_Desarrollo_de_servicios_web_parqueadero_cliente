@@ -20,7 +20,8 @@ const Vehiculoschema = new Schema({
         required: true
     },
     documento: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Cliente',
         required: true
     },
 },{
