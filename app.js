@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const dbconnect = require('./config');
 const ModeUser = require('./modelcliente');
 const ModeEmpleado = require('./modelempleado');
-const ModeTivehiculo = require('./modeltivehiculo')
+const ModeTivehiculo = require('./modeltivehiculo');
+const ModeVehiculo = require('./modelvehiculo');
 
 //Llamar para que reconozca el archivo config
 dbconnect();
@@ -249,8 +250,7 @@ router.get('/tipovehiculo/:placa', async (req, res)=>{
         res.status(500).json({mensaje: "Error al consultar por placa",error:error.message});
     }
     
-})
-
+});
 //Actualizar datos del vehiculo
 router.put('/tipovehiculo/:placa', async(req,res)=>{
     try {
@@ -281,11 +281,71 @@ router.delete('/tipovehiculo/:placa',async(req, res)=>{
 /***********=========================*********
  * RUTA PARA VEHICULO
  **********=========================**********/ 
+//Crear información de los vehiculos
+router.post('/vehiculo', async (req, res)=>{
+    try{
+        const infovehiculo = await ModeVehiculo.create(req.body);
+        res.status(201).send(infovehiculo);
+    }catch(error){
+        res.status(500).json({mensaje:"Error al insertar los datos del vehiculo",error:error.message});
+    }
+})
+//Consulta general
+router.get('/vehiculo', async (req, res)=>{
+    try {
+        const infovehiculo = await ModeVehiculo.find({});
+        res.send(infovehiculo);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar datos", error:error.message});
+    }
+})
+//Consultar por placa
+router.get('/vehiculo/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeVehiculo.findOne({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Datos del vehiculo no encontrado"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar datos por placa", error:error.message});
+    }
+})
+//Actualizar datos
+router.put('/vehiculo/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeVehiculo.findOneAndUpdate({placa: placa_buscar}, req.body, {new:true});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Datos del vehiculo actualizados"});
+        }
+        res.send(respuesta);s
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar datos por placa", error:error.message});
+    }
+})
+//Eliminar datos
+router.delete('/vehiculo/:placa', async(req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeVehiculo.findOneAndDelete({placa:placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"vehiculo no encontrado"});
+        }
+        res.send({mensaje: "Datos del vehiculo eliminado con exito"});
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al eliminar datos del vehiculo", error:error.message});
+    }
+})
 /***********=========================*********
- * RUTA PARATIPO DE MOVIMIENTO
+ * RUTA PARA TIPO DE MOVIMIENTO
  **********=========================**********/
 /***********=========================*********
- * RUTA PARATIPO DE TARIFA
+ * RUTA PARA TIPO DE TARIFA
+ **********=========================**********/ 
+/***********=========================*********
+ * RUTA PARA TIPO DE ESPACIO
  **********=========================**********/ 
 //json hara uso de las rutas
 //Vincular las rutas a la aplicación express
