@@ -9,6 +9,7 @@ const ModeUser = require('./modelcliente');
 const ModeEmpleado = require('./modelempleado');
 const ModeTivehiculo = require('./modeltivehiculo');
 const ModeVehiculo = require('./modelvehiculo');
+const ModeMovimiento = require('./modelmovimiento');
 
 //Llamar para que reconozca el archivo config
 dbconnect();
@@ -341,6 +342,38 @@ router.delete('/vehiculo/:placa', async(req, res)=>{
 /***********=========================*********
  * RUTA PARA TIPO DE MOVIMIENTO
  **********=========================**********/
+//Crear movimiento del vehiculo para identificar si va de salida o de entrada
+router.post('/movimiento', async (req, res)=>{
+    try{
+        const infomovimiento = await ModeMovimiento.create(req.body);
+        res.status(201).send(infomovimiento);
+        
+    }catch(error){
+        res.status(500).json({mensaje:"Error al procesar movimiento",error:error.message});
+    }
+})
+//Consulta general
+router.get('/movimiento', async (req, res)=>{
+    try {
+        const infomovimiento = await ModeMovimiento.find({});
+        res.send(infomovimiento);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar movimientos", error:error.message});
+    }
+})
+//Consultar por placa
+router.get('/movimiento/:placa', async (req, res)=>{
+    try {
+        const placa_buscar = req.params.placa;
+        const respuesta = await ModeMovimiento.findOne({placa: placa_buscar});
+        if(!respuesta){
+            return res.status(404).json({mensaje:"Movimientos del vehiculo no encontrado"});
+        }
+        res.send(respuesta);
+    } catch (error) {
+        res.status(500).json({mensaje:"Error al consultar datos por placa", error:error.message});
+    }
+})
 /***********=========================*********
  * RUTA PARA TIPO DE TARIFA
  **********=========================**********/ 
